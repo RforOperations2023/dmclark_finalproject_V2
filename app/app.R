@@ -136,9 +136,21 @@ server <- function(input, output, session) {
   
   # Plotly graph 2: Pie chart of number of shootings by state
   output$graph2 <- renderPlotly({
-    plot_ly(filtered_data(), labels = ~state) %>%
-      add_pie(values = ~1) %>%
-      layout(title = "Number of shootings by state", margin = list(b = 50))
+    # Compute the percentage of shootings for each state
+    shootings_by_state <- filtered_data() %>%
+      group_by(state) %>%
+      summarise(n_shootings = n()) %>%
+      mutate(percent_shootings = n_shootings / sum(n_shootings) * 100)
+    
+    # Combine states with less than 1% of shootings
+    shootings_by_state <- shootings_by_state %>%
+      mutate(state_combined = ifelse(percent_shootings < 1, "accounts for < 1%", state)) %>%
+      group_by(state_combined) %>%
+      summarise(n_shootings = sum(n_shootings))
+    
+    plot_ly(shootings_by_state, labels = ~state_combined) %>%
+      add_pie(values = ~n_shootings) %>%
+      layout(title = "Number of shootings by state", margin = list(b = 100))
   })
   
   # Download button for filtered data
