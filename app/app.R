@@ -6,6 +6,7 @@ library(DT)
 library(sp)
 library(maps)
 library(maptools)
+library(lubridate)
 #install.packages("maps")
 #install.packages("maptools")
 # Get the US state map
@@ -118,12 +119,20 @@ server <- function(input, output, session) {
     filtered_data()
   })
   
-  # Plotly graph 1: Bar chart of number of shootings by race
   output$graph1 <- renderPlotly({
-    plot_ly(filtered_data(), x = ~race) %>%
-      add_trace(type = "bar") %>%
-      layout(title = "Number of shootings by race")
+    filtered_data() %>%
+      # Convert date column to date format
+      mutate(date = as.Date(date)) %>%
+      # Group by race and month, and calculate the count of shootings
+      group_by(race, month = format(date, "%Y-%m")) %>%
+      summarise(shootings = n()) %>%
+      # Filter by the selected races
+      filter(ifelse(input$race_input == "All", TRUE, race %in% input$race_input)) %>%
+      # Create a line chart with traces for each race
+      plot_ly(x = ~month, y = ~shootings, color = ~race, type = "scatter", mode = "lines") %>%
+      layout(title = "Shootings by race and month", xaxis = list(title = "Month"), yaxis = list(title = "Number of shootings"))
   })
+
   
   # Plotly graph 2: Pie chart of number of shootings by state
   output$graph2 <- renderPlotly({
