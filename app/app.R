@@ -19,7 +19,6 @@ usmap <- map("state", plot = FALSE, fill = TRUE)
 # Convert to a SpatialPolygonsDataFrame object
 states <- map2SpatialPolygons(usmap, IDs = usmap$names, proj4string = CRS("+proj=longlat +datum=WGS84"))
 
-#osncojnwnsocna;jvnsojvnjvnarjvnaejrnvaeojrvnaejrvneajrnvaejvnaejfvnafjvnafjna
 
 # load the dataset
 data <- read.csv("US Police shootings in from 2015-22.csv")
@@ -85,7 +84,6 @@ ui <- fluidPage(
 # Define server
 server <- function(input, output, session) {
   
-  
   # Initialize leaflet map
   output$map <- renderLeaflet({
     leaflet() %>%
@@ -116,6 +114,43 @@ server <- function(input, output, session) {
                   fillColor = "blue", fillOpacity = 0.2, weight = 2,
                   options = list(clickable = FALSE))
   })
+  
+  
+  
+#Leaflet Proxy code --------------------------------------------------  
+  # # Initialize leaflet map
+  # output$map <- renderLeaflet({
+  #   leaflet() %>%
+  #     addTiles() %>%
+  #     # Polygons for each state
+  #     addPolygons(data = states,
+  #                 fillColor = "blue", fillOpacity = 0.2, weight = 2,
+  #                 options = list(clickable = FALSE))
+  # })
+  # 
+  # # Filter the data based on input 
+  # filtered_data <- reactive({
+  #   data %>%
+  #     filter(date >= input$date_range[1] & date <= input$date_range[2]) %>%
+  #     filter(ifelse(input$race_input == "All", TRUE, race == input$race_input)) %>%
+  #     filter(ifelse(input$state_input == "All", TRUE, state == input$state_input))
+  # })
+  # 
+  # # Leaflet map with markers and polygons
+  # observeEvent(filtered_data(), {
+  #   # Update the leaflet map using a leaflet proxy
+  #   leafletProxy("map") %>%
+  #     clearMarkers() %>%
+  #     addMarkers(
+  #       data = filtered_data(),
+  #       lat = ~latitude,
+  #       lng = ~longitude,
+  #       clusterOptions = markerClusterOptions()
+  #     )
+  # })
+#----------------------------------------------------------------------------
+  
+  
   
   # Datatable with raw data
   output$table <- renderDataTable({
