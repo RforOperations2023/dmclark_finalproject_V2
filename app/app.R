@@ -9,8 +9,11 @@ library(maptools)
 library(lubridate)
 #install.packages("maps")
 #install.packages("maptools")
-# Get the US state map
 
+# Break here, I am trying to incorporate the leaflet proxy 
+
+
+# Get the US state map
 usmap <- map("state", plot = FALSE, fill = TRUE)
 
 # Convert to a SpatialPolygonsDataFrame object
