@@ -10,15 +10,12 @@ library(lubridate)
 #install.packages("maps")
 #install.packages("maptools")
 
-# Break here, I am trying to incorporate the leaflet proxy 
-
 
 # Get the US state map
 usmap <- map("state", plot = FALSE, fill = TRUE)
 
 # Convert to a SpatialPolygonsDataFrame object
 states <- map2SpatialPolygons(usmap, IDs = usmap$names, proj4string = CRS("+proj=longlat +datum=WGS84"))
-
 
 # load the dataset
 data <- read.csv("US Police shootings in from 2015-22.csv")
@@ -148,6 +145,12 @@ server <- function(input, output, session) {
   #       clusterOptions = markerClusterOptions()
   #     )
   # })
+  
+# once the above code is commented out and replaced with this code, it shows the 
+# map and overlay for the state boundaries but no actual data points 
+  
+
+
 #----------------------------------------------------------------------------
   
   
@@ -168,7 +171,7 @@ server <- function(input, output, session) {
       filter(ifelse(input$race_input == "All", TRUE, race %in% input$race_input)) %>%
       # Create a line chart with traces for each race
       plot_ly(x = ~month, y = ~shootings, color = ~race, type = "scatter", mode = "lines") %>%
-      layout(title = "Shootings by race and month", xaxis = list(title = "Month"), yaxis = list(title = "Number of shootings"))
+      layout(title = "Shootings by race and month (add or remove races by clicking the legend)", xaxis = list(title = "Month"), yaxis = list(title = "Number of shootings"))
   })
 
   
@@ -188,7 +191,7 @@ server <- function(input, output, session) {
     
     plot_ly(shootings_by_state, labels = ~state_combined) %>%
       add_pie(values = ~n_shootings) %>%
-      layout(title = "Number of shootings by state", margin = list(b = 100))
+      layout(title = "Number of shootings by state (add or remove states by clicking the legend) ", margin = list(b = 100))
   })
   
   # Download button for filtered data
