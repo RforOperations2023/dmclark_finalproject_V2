@@ -90,15 +90,15 @@ server <- function(input, output, session) {
                   fillColor = "blue", fillOpacity = 0.2, weight = 2,
                   options = list(clickable = FALSE))
   })
-  
-  # Filter the data based on input 
+
+  # Filter the data based on input
   filtered_data <- reactive({
     data %>%
       filter(date >= input$date_range[1] & date <= input$date_range[2]) %>%
       filter(ifelse(input$race_input == "All", TRUE, race == input$race_input)) %>%
       filter(ifelse(input$state_input == "All", TRUE, state == input$state_input))
   })
-  
+
   # Leaflet map with markers and polygons
   output$map <- renderLeaflet({
     leaflet() %>%
@@ -114,8 +114,8 @@ server <- function(input, output, session) {
   
   
   
-#Leaflet Proxy code --------------------------------------------------  
-  # # Initialize leaflet map
+  #Leaflet Proxy code --------------------------------------------------  
+  # Initialize leaflet map
   # output$map <- renderLeaflet({
   #   leaflet() %>%
   #     addTiles() %>%
@@ -125,7 +125,7 @@ server <- function(input, output, session) {
   #                 options = list(clickable = FALSE))
   # })
   # 
-  # # Filter the data based on input 
+  # # Filter the data based on input
   # filtered_data <- reactive({
   #   data %>%
   #     filter(date >= input$date_range[1] & date <= input$date_range[2]) %>%
@@ -138,14 +138,19 @@ server <- function(input, output, session) {
   #   # Update the leaflet map using a leaflet proxy
   #   leafletProxy("map") %>%
   #     clearMarkers() %>%
-  #     addMarkers(
-  #       data = filtered_data(),
-  #       lat = ~latitude,
-  #       lng = ~longitude,
-  #       clusterOptions = markerClusterOptions()
-  #     )
+  #     addMarkers(data = filtered_data(),
+  #                lat = ~latitude,
+  #                lng = ~longitude,
+  #                popup = ~paste0("Date: ", date, "<br>",
+  #                                "Race: ", race, "<br>",
+  #                                "State: ", state, "<br>",
+  #                                "City: ", city, "<br>",
+  #                                "Armed: ", armed, "<br>",
+  #                                "Age: ", age, "<br>",
+  #                                "Gender: ", gender),
+  #                clusterOptions = markerClusterOptions())
   # })
-  
+  # 
 # once the above code is commented out and replaced with this code, it shows the 
 # map and overlay for the state boundaries but no actual data points 
   
